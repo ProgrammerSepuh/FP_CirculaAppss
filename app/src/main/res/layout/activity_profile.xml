@@ -149,7 +149,16 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:src="@drawable/facebook" />
+
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/imageUrlTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="placeholder"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -223,24 +232,57 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="31dp"
-        android:src="@drawable/konten_akun"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+<!--    <ImageView-->
+<!--        android:id="@+id/imageView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="31dp"-->
+<!--        android:src="@drawable/konten_akun"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />-->
 
     <Button
         android:id="@+id/btnUpdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
         android:text="update"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+
+    <Button
+        android:id="@+id/btnSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="search"
+        app:layout_constraintStart_toEndOf="@+id/btnUpdate"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+
+    <Button
+        android:id="@+id/btnUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="upload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnUpdate"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+
+    <Button
+        android:id="@+id/explore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="explore"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyProfil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/btnUpload" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

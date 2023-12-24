@@ -62,64 +62,113 @@ package com.example.finalproject
 //
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.database.FirebaseDatabase
+
 
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
     private lateinit var userReference: DatabaseReference
-
+    private lateinit var imageViewProfile: ImageView
     private lateinit var textViewUsername: TextView
     private lateinit var textViewEmail: TextView
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
         firebaseAuth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
-
+        // Di dalam metode onCreate atau onResume
+        val recyclerView: RecyclerView = findViewById(R.id.recyProfil)
+        recyclerView.layoutManager = GridLayoutManager(this, 3) // Tampilan grid dengan 3 kolom
+        val imageList: MutableList<String> = mutableListOf()
         val currentUser = firebaseAuth.currentUser
         val userId = currentUser?.uid // Mendapatkan UID pengguna saat ini
 
         textViewUsername = findViewById(R.id.userIdTextView)
         textViewEmail = findViewById(R.id.userEmailTextView)
-
         userId?.let { uid ->
-            userReference = database.reference.child("users").child(uid)
+            val userReference = database.reference.child("users").child(uid)
 
             userReference.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        val username = snapshot.child("username").value.toString()
-                        val email = snapshot.child("email").value.toString()
+                override fun onDataChange(userSnapshot: DataSnapshot) {
+                    if (userSnapshot.exists()) {
+                        val username = userSnapshot.child("username").getValue(String::class.java)
+                        val email = userSnapshot.child("email").getValue(String::class.java)
 
                         // Menampilkan informasi username dan email ke dalam TextView
                         textViewUsername.text = "@$username"
                         textViewEmail.text = "$email"
+
+                        // Ambil daftar URL gambar dari Firebase di sini dan tambahkan ke imageList
+                        val imagesRef = database.reference.child("uploads").child(uid)
+                        imagesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(imagesSnapshot: DataSnapshot) {
+                                if (imagesSnapshot.exists()) {
+                                    for (image in imagesSnapshot.children) {
+                                        val imageUrl = image.child("imageUrl").getValue(String::class.java)
+                                        imageUrl?.let { imageList.add(it) }
+                                    }
+                                    // Setelah mengupdate imageList, update adapter RecyclerView
+                                    val imageAdapter = ImageAdapter(imageList)
+                                    recyclerView.adapter = imageAdapter
+                                }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                // Handle error saat membaca data gambar dari Firebase
+                                Toast.makeText(this@ProfileActivity, "Failed to read images data.", Toast.LENGTH_SHORT).show()
+                            }
+                        })
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // Handle error saat membaca data dari Firebase
+                    // Handle error saat membaca data pengguna dari Firebase
                     Toast.makeText(this@ProfileActivity, "Failed to read user data.", Toast.LENGTH_SHORT).show()
                 }
             })
         }
 
+
         val btnUp: Button = findViewById(R.id.btnUpdate)
         btnUp.setOnClickListener{
             val intent = Intent(this, EditProfileActivity::class.java)
             startActivity(intent)
+        }
+        val btnPost : Button = findViewById(R.id.btnUpload)
+        btnPost.setOnClickListener{
+            val intupload = Intent(this, UploadActivity::class.java)
+            startActivity(intupload)
+        }
+
+        val btnEx:Button = findViewById(R.id.explore)
+        btnEx.setOnClickListener{
+            val intex = Intent(this,TampilActivity::class.java)
+            startActivity(intex)
+        }
+
+        val btnSe:Button = findViewById(R.id.btnSearch)
+        btnSe.setOnClickListener{
+            val intea = Intent(this,SearchActivity::class.java)
+            startActivity(intea)
         }
     }
 
@@ -129,6 +178,11 @@ class ProfileActivity : AppCompatActivity() {
         // Update kembali tampilan username dan email setiap kali halaman ProfileActivity ditampilkan ulang
         val currentUser = firebaseAuth.currentUser
         val userId = currentUser?.uid
+        database = FirebaseDatabase.getInstance()
+        // Di dalam metode onCreate atau onResume
+        val recyclerView: RecyclerView = findViewById(R.id.recyProfil)
+        recyclerView.layoutManager = GridLayoutManager(this, 1) // Tampilan grid dengan 3 kolom
+        val imageList: MutableList<String> = mutableListOf()
 
         userId?.let { uid ->
             userReference = database.reference.child("users").child(uid)
@@ -142,15 +196,17 @@ class ProfileActivity : AppCompatActivity() {
                         // Menampilkan informasi username dan email ke dalam TextView
                         textViewUsername.text = "@$username"
                         textViewEmail.text = "$email"
+
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // Handle error saat membaca data dari Firebase
+                    // Handle error saat membaca data pengguna dari Firebase
                     Toast.makeText(this@ProfileActivity, "Failed to read user data.", Toast.LENGTH_SHORT).show()
                 }
             })
         }
     }
+
 }
 
