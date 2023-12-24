@@ -73,6 +73,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalproject.model.Upload
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -95,9 +96,10 @@ class ProfileActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
+
         // Di dalam metode onCreate atau onResume
         val recyclerView: RecyclerView = findViewById(R.id.recyProfil)
-        recyclerView.layoutManager = GridLayoutManager(this, 3) // Tampilan grid dengan 3 kolom
+        recyclerView.layoutManager = GridLayoutManager(this, 3)
         val imageList: MutableList<String> = mutableListOf()
         val currentUser = firebaseAuth.currentUser
         val userId = currentUser?.uid // Mendapatkan UID pengguna saat ini
@@ -105,6 +107,7 @@ class ProfileActivity : AppCompatActivity() {
         textViewUsername = findViewById(R.id.userIdTextView)
         textViewEmail = findViewById(R.id.userEmailTextView)
         userId?.let { uid ->
+            // Mengakses referensi user yang saat ini masuk di tabel 'users'
             val userReference = database.reference.child("users").child(uid)
 
             userReference.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -117,26 +120,8 @@ class ProfileActivity : AppCompatActivity() {
                         textViewUsername.text = "@$username"
                         textViewEmail.text = "$email"
 
-                        // Ambil daftar URL gambar dari Firebase di sini dan tambahkan ke imageList
-                        val imagesRef = database.reference.child("uploads").child(uid)
-                        imagesRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(imagesSnapshot: DataSnapshot) {
-                                if (imagesSnapshot.exists()) {
-                                    for (image in imagesSnapshot.children) {
-                                        val imageUrl = image.child("imageUrl").getValue(String::class.java)
-                                        imageUrl?.let { imageList.add(it) }
-                                    }
-                                    // Setelah mengupdate imageList, update adapter RecyclerView
-                                    val imageAdapter = ImageAdapter(imageList)
-                                    recyclerView.adapter = imageAdapter
-                                }
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-                                // Handle error saat membaca data gambar dari Firebase
-                                Toast.makeText(this@ProfileActivity, "Failed to read images data.", Toast.LENGTH_SHORT).show()
-                            }
-                        })
+                        // Memuat daftar gambar pengguna dari tabel 'uploads' berdasarkan UID
+                        fetchUserImages(uid)
                     }
                 }
 
@@ -170,19 +155,39 @@ class ProfileActivity : AppCompatActivity() {
             val intea = Intent(this,SearchActivity::class.java)
             startActivity(intea)
         }
+
+    }
+    private fun fetchUserImages(uid: String) {
+        val uploadsRef = database.reference.child("uploads").orderByChild("s").equalTo(uid)
+
+        uploadsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val imageList: MutableList<String> = mutableListOf()
+
+                for (snapshot in dataSnapshot.children) {
+                    val imageUrl = snapshot.child("imageUrl").getValue(String::class.java)
+                    imageUrl?.let { imageList.add(it) }
+                }
+
+                // Setelah mendapatkan daftar URL gambar, pasang adapter RecyclerView
+                val recyclerView: RecyclerView = findViewById(R.id.recyProfil)
+                recyclerView.layoutManager = GridLayoutManager(this@ProfileActivity, 3) // Atur layout manager dengan 3 kolom
+                val imageAdapter = ImageUserAdapter(this@ProfileActivity, imageList)
+                recyclerView.adapter = imageAdapter
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error saat mengambil data dari Firebase
+                Toast.makeText(this@ProfileActivity, "Failed to read user images.", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     override fun onResume() {
         super.onResume()
 
-        // Update kembali tampilan username dan email setiap kali halaman ProfileActivity ditampilkan ulang
         val currentUser = firebaseAuth.currentUser
         val userId = currentUser?.uid
-        database = FirebaseDatabase.getInstance()
-        // Di dalam metode onCreate atau onResume
-        val recyclerView: RecyclerView = findViewById(R.id.recyProfil)
-        recyclerView.layoutManager = GridLayoutManager(this, 1) // Tampilan grid dengan 3 kolom
-        val imageList: MutableList<String> = mutableListOf()
 
         userId?.let { uid ->
             userReference = database.reference.child("users").child(uid)
@@ -193,20 +198,25 @@ class ProfileActivity : AppCompatActivity() {
                         val username = snapshot.child("username").value.toString()
                         val email = snapshot.child("email").value.toString()
 
-                        // Menampilkan informasi username dan email ke dalam TextView
                         textViewUsername.text = "@$username"
                         textViewEmail.text = "$email"
 
+                        fetchUserImages(uid) // Memuat kembali daftar gambar pengguna
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // Handle error saat membaca data pengguna dari Firebase
                     Toast.makeText(this@ProfileActivity, "Failed to read user data.", Toast.LENGTH_SHORT).show()
                 }
             })
         }
     }
-
 }
+
+
+
+
+
+
+
 

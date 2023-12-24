@@ -1,5 +1,6 @@
 package com.example.finalproject
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,8 +18,8 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        recyclerViewSearch = findViewById(R.id.recyclerViewSearch) // Mendapatkan referensi ke RecyclerView dari layout XML
-        recyclerViewSearch.layoutManager = LinearLayoutManager(this) // Atur layout manager (misalnya LinearLayoutManager)
+        recyclerViewSearch = findViewById(R.id.recyclerViewSearch)
+        recyclerViewSearch.layoutManager = LinearLayoutManager(this)
 
         val userList: MutableList<User> = mutableListOf()
 
@@ -36,7 +37,11 @@ class SearchActivity : AppCompatActivity() {
                     }
                 }
                 // Setelah mendapatkan daftar pengguna, inisialisasikan adapter dan RecyclerView
-                searchUserAdapter = SearchUserAdapter(userList)
+                searchUserAdapter = SearchUserAdapter(userList) { user ->
+                    val intent = Intent(this@SearchActivity, UserLainActivity::class.java)
+                    intent.putExtra("userId", user.uid) // Mengirim ID pengguna lain ke halaman profil pengguna lain
+                    startActivity(intent)
+                }
                 recyclerViewSearch.adapter = searchUserAdapter
             }
 
@@ -45,5 +50,6 @@ class SearchActivity : AppCompatActivity() {
             }
         })
     }
+
 }
 

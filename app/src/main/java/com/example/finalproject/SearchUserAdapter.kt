@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.finalproject.model.User
 
-class SearchUserAdapter(private val userList: List<User>) :
+class SearchUserAdapter(private val userList: List<User>, private val onItemClickListener: (User) -> Unit) :
     RecyclerView.Adapter<SearchUserAdapter.UserViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
@@ -18,7 +18,7 @@ class SearchUserAdapter(private val userList: List<User>) :
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val user = userList[position]
-        holder.bind(user)
+        holder.bind(user, onItemClickListener)
     }
 
     override fun getItemCount(): Int {
@@ -29,9 +29,14 @@ class SearchUserAdapter(private val userList: List<User>) :
         private val usernameTextView: TextView = itemView.findViewById(R.id.textViewUsername)
         private val emailTextView: TextView = itemView.findViewById(R.id.textViewEmail)
 
-        fun bind(user: User) {
+        fun bind(user: User, onItemClickListener: (User) -> Unit) {
             usernameTextView.text = user.username
             emailTextView.text = user.email
+
+            itemView.setOnClickListener {
+                onItemClickListener(user)
+            }
         }
     }
 }
+
