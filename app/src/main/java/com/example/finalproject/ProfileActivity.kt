@@ -89,6 +89,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var textViewUsername: TextView
     private lateinit var textViewEmail: TextView
 
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

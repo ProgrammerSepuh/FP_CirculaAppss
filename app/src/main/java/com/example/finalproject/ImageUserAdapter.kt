@@ -12,7 +12,7 @@ class ImageUserAdapter(private val context: Context, private val imageList: List
     RecyclerView.Adapter<ImageUserAdapter.ImageViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_image_user, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.item_image_user, parent, false)
         return ImageViewHolder(view)
     }
 
@@ -29,6 +29,7 @@ class ImageUserAdapter(private val context: Context, private val imageList: List
         private val imageView: ImageView = itemView.findViewById(R.id.imageView)
 
         fun bind(imageUrl: String) {
+            // Load gambar menggunakan Glide atau library serupa
             Glide.with(context)
                 .load(imageUrl)
                 .into(imageView)

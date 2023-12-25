@@ -13,7 +13,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.finalproject.model.Upload
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
@@ -80,30 +83,46 @@ class UploadActivity : AppCompatActivity() {
             fileReference.putFile(selectedImageUri)
                 .addOnSuccessListener { taskSnapshot ->
                     fileReference.downloadUrl.addOnSuccessListener { uri ->
-                        val uploadData = Upload(
-                            uri.toString(),
-                            editTextDescription.text.toString(),
-                            firebaseAuth.currentUser?.uid ?: ""
-                        )
+                        val currentUserId = firebaseAuth.currentUser?.uid ?: ""
+                        val currentUser = firebaseAuth.currentUser
 
-                        // Menyimpan data gambar ke Firebase Database (contoh menggunakan Realtime Database)
-                        val databaseReference = FirebaseDatabase.getInstance().reference.child("uploads")
-                        val uploadId = databaseReference.push().key
-                        if (uploadId != null) {
-                            databaseReference.child(uploadId).setValue(uploadData)
-                        }
+                        // Ambil referensi ke tabel 'users'
+                        val usersRef = FirebaseDatabase.getInstance().reference.child("users")
 
-                        Toast.makeText(this, "Upload berhasil", Toast.LENGTH_SHORT).show()
+                        // Dapatkan 'username' dari tabel 'users' berdasarkan 'userId' saat ini
+                        usersRef.child(currentUserId).addListenerForSingleValueEvent(object :
+                            ValueEventListener {
+                            override fun onDataChange(userSnapshot: DataSnapshot) {
+                                val username = userSnapshot.child("username").getValue(String::class.java)
 
-                        // Pengguna akan diarahkan ke halaman ProfileActivity setelah berhasil mengunggah
-                        val intent = Intent(this, ProfileActivity::class.java)
-                        startActivity(intent)
-                        finish() // Jika ingin menutup Activity saat ini setelah pindah ke ProfileActivity
+                                val uploadData = Upload(
+                                    uri.toString(),
+                                    editTextDescription.text.toString(),
+                                    currentUserId,
+                                    username ?: "" // Menggunakan 'username' dari tabel 'users'
+                                )
+
+                                val databaseReference = FirebaseDatabase.getInstance().reference.child("uploads")
+                                val uploadId = databaseReference.push().key
+                                if (uploadId != null) {
+                                    databaseReference.child(uploadId).setValue(uploadData)
+                                }
+
+                                Toast.makeText(this@UploadActivity, "Upload berhasil", Toast.LENGTH_SHORT).show()
+
+                                val intent = Intent(this@UploadActivity, ProfileActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                // Handle error
+                            }
+                        })
                     }
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(this, "Gagal mengunggah gambar: ${e.message}", Toast.LENGTH_SHORT).show()
-                    // Tampilkan pesan kesalahan yang dihasilkan oleh Firebase
                     Log.e("UploadError", "Gagal mengunggah gambar: ${e.message}", e)
                 }
         } else {
