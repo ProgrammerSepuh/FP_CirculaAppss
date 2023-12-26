@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/imageViewUser"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="115dp"
+        android:layout_height="115dp"
         android:scaleType="centerCrop"
        />
 

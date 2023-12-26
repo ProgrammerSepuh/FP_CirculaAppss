@@ -68,13 +68,13 @@ class HomeImageAdapter(private val context: Context, private val imageList: List
 
 
         fun bind(imageUrl: String, username: String) {
-            // Menampilkan gambar menggunakan Glide atau library serupa
+
             Glide.with(context)
                 .load(imageUrl)
                 .into(imageViewUser)
 
             // Menampilkan informasi user ke TextView
-            textViewUsername.text = username
+            textViewUsername.text = "@$username"
 
         }
     }
