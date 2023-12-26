@@ -15,6 +15,9 @@
         android:theme="@style/Theme.FinalProject"
         tools:targetApi="31">
         <activity
+            android:name=".DetailImageActivity"
+            android:exported="false" />
+        <activity
             android:name=".UserLainActivity"
             android:exported="false" />
         <activity

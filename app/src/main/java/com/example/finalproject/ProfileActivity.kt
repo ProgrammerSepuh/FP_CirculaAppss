@@ -164,16 +164,21 @@ class ProfileActivity : AppCompatActivity() {
         uploadsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val imageList: MutableList<String> = mutableListOf()
+                val descriptionList: MutableList<String> = mutableListOf() // Tambahkan list untuk menyimpan deskripsi gambar
 
                 for (snapshot in dataSnapshot.children) {
                     val imageUrl = snapshot.child("imageUrl").getValue(String::class.java)
-                    imageUrl?.let { imageList.add(it) }
+                    val description = snapshot.child("imageDescription").getValue(String::class.java) // Ambil deskripsi gambar
+                    imageUrl?.let {
+                        imageList.add(it)
+                        descriptionList.add(description ?: "") // Tambahkan deskripsi ke list
+                    }
                 }
 
-                // Setelah mendapatkan daftar URL gambar, pasang adapter RecyclerView
+                // Setelah mendapatkan daftar URL dan deskripsi gambar, pasang adapter RecyclerView
                 val recyclerView: RecyclerView = findViewById(R.id.recyProfil)
                 recyclerView.layoutManager = GridLayoutManager(this@ProfileActivity, 3) // Atur layout manager dengan 3 kolom
-                val imageAdapter = ImageUserAdapter(this@ProfileActivity, imageList)
+                val imageAdapter = ImageUserAdapter(this@ProfileActivity, imageList, descriptionList) // Teruskan deskripsi gambar ke adapter
                 recyclerView.adapter = imageAdapter
             }
 
@@ -183,6 +188,9 @@ class ProfileActivity : AppCompatActivity() {
             }
         })
     }
+
+
+
 
     override fun onResume() {
         super.onResume()
