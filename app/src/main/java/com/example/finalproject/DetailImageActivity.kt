@@ -1,10 +1,19 @@
 package com.example.finalproject
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 
 //class DetailImageActivity : AppCompatActivity() {
@@ -52,6 +61,8 @@ class DetailImageActivity : AppCompatActivity() {
 
     private lateinit var imageViewDetail: ImageView
     private lateinit var textViewDescription: TextView
+    private lateinit var imageUrl: String // Variabel untuk menyimpan imageUrl
+    private lateinit var btn :Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,9 +70,9 @@ class DetailImageActivity : AppCompatActivity() {
 
         imageViewDetail = findViewById(R.id.imageViewDetail)
         textViewDescription = findViewById(R.id.textViewDescription)
-
-        val imageUrl = intent.getStringExtra("imageUrl")
-        val description = intent.getStringExtra("imageDescription")
+        btn = findViewById(R.id.buttonSave)
+        imageUrl = intent.getStringExtra("imageUrl") ?: ""
+        val description = intent.getStringExtra("imageDescription") ?: ""
 
         // Tampilkan gambar pada ImageView secara penuh
         Glide.with(this)
@@ -70,8 +81,46 @@ class DetailImageActivity : AppCompatActivity() {
 
         // Tampilkan deskripsi gambar pada TextView
         textViewDescription.text = description
+
+        // Panggil fungsi untuk menyimpan deskripsi gambar ke Firebase
+        // Misalnya, di sini kita panggil fungsi saat ImageView di-klik
+        val btnSave: Button = findViewById(R.id.buttonSave)
+        btnSave.setOnClickListener {
+            val newDescription = findViewById<EditText>(R.id.textViewDescription).text.toString()
+            saveImageDescriptionToFirebase(newDescription)
+        }
     }
+
+    private fun saveImageDescriptionToFirebase(newDescription: String) {
+        // Simpan deskripsi gambar yang baru ke Firebase
+        val databaseReference = FirebaseDatabase.getInstance().reference.child("uploads")
+        val query = databaseReference.orderByChild("imageUrl").equalTo(imageUrl)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children) {
+                    // Ubah deskripsi gambar
+                    snapshot.ref.child("imageDescription").setValue(newDescription)
+                        .addOnSuccessListener {
+                            Toast.makeText(this@DetailImageActivity, "Image description updated.", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this@DetailImageActivity, "Failed to update image description.", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error saat mengambil data dari Firebase
+                Toast.makeText(this@DetailImageActivity, "Failed to update image description.", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
+
 }
+
 
 
 

@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.example.finalproject"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.finalproject"
         minSdk = 26
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -53,6 +53,8 @@ dependencies {
     implementation("com.google.firebase:firebase-functions:20.4.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("com.firebaseui:firebase-ui-database:8.0.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -157,6 +157,12 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(intea)
         }
 
+        val btnHom:Button = findViewById(R.id.home)
+        btnHom.setOnClickListener{
+            val intttt = Intent(this,HomeActivity::class.java)
+            startActivity(intttt)
+        }
+
     }
     private fun fetchUserImages(uid: String) {
         val uploadsRef = database.reference.child("uploads").orderByChild("s").equalTo(uid)
