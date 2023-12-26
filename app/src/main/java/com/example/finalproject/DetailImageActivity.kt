@@ -63,6 +63,7 @@ class DetailImageActivity : AppCompatActivity() {
     private lateinit var textViewDescription: TextView
     private lateinit var imageUrl: String // Variabel untuk menyimpan imageUrl
     private lateinit var btn :Button
+    private lateinit var btnDelete: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,13 +83,16 @@ class DetailImageActivity : AppCompatActivity() {
         // Tampilkan deskripsi gambar pada TextView
         textViewDescription.text = description
 
-        // Panggil fungsi untuk menyimpan deskripsi gambar ke Firebase
-        // Misalnya, di sini kita panggil fungsi saat ImageView di-klik
         val btnSave: Button = findViewById(R.id.buttonSave)
         btnSave.setOnClickListener {
             val newDescription = findViewById<EditText>(R.id.textViewDescription).text.toString()
             saveImageDescriptionToFirebase(newDescription)
         }
+        btnDelete = findViewById(R.id.btnDelete)
+        btnDelete.setOnClickListener{
+            deleteImageFromFirebase()
+        }
+
     }
 
     private fun saveImageDescriptionToFirebase(newDescription: String) {
@@ -116,9 +120,30 @@ class DetailImageActivity : AppCompatActivity() {
             }
         })
     }
+    private fun deleteImageFromFirebase() {
+        val databaseReference = FirebaseDatabase.getInstance().reference.child("uploads")
+        val query = databaseReference.orderByChild("imageUrl").equalTo(imageUrl)
 
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children) {
+                    snapshot.ref.removeValue()
+                        .addOnSuccessListener {
+                            Toast.makeText(this@DetailImageActivity, "Image deleted.", Toast.LENGTH_SHORT).show()
+                            finish() // Kembali ke Activity sebelumnya setelah menghapus
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this@DetailImageActivity, "Failed to delete image.", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
 
-
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error saat mengambil data dari Firebase
+                Toast.makeText(this@DetailImageActivity, "Failed to delete image.", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 }
 
 
