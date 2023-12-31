@@ -2,6 +2,7 @@ package com.example.finalproject
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,11 +33,12 @@ class SearchActivity : AppCompatActivity() {
                     val username = snapshot.child("username").getValue(String::class.java)
 
                     if (uid != null && email != null && username != null) {
-                        val user = User(uid, email, username)
+                        val profileImageUrl = snapshot.child("profileImageUrl").getValue(String::class.java)
+                        val user = User(uid, email, username, profileImageUrl)
                         userList.add(user)
                     }
                 }
-                // Setelah mendapatkan daftar pengguna, inisialisasikan adapter dan RecyclerView
+
                 searchUserAdapter = SearchUserAdapter(userList) { user ->
                     val intent = Intent(this@SearchActivity, UserLainActivity::class.java)
                     intent.putExtra("userId", user.uid) // Mengirim ID pengguna lain ke halaman profil pengguna lain
@@ -46,10 +48,38 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle error saat mengambil data dari Firebase
+
             }
         })
-    }
 
+        val btnPost: ImageView = findViewById(R.id.btnUpload)
+        btnPost.setOnClickListener {
+            val intentUpload = Intent(this, UploadActivity::class.java)
+            startActivity(intentUpload)
+        }
+
+        val btnEx: ImageView = findViewById(R.id.explore)
+        btnEx.setOnClickListener {
+            val intentExplore = Intent(this, TampilActivity::class.java)
+            startActivity(intentExplore)
+        }
+
+        val btnSe: ImageView = findViewById(R.id.btnSearch)
+        btnSe.setOnClickListener {
+        }
+
+        val btnHom: ImageView = findViewById(R.id.home)
+        btnHom.setOnClickListener {
+            val intentHome = Intent(this, HomeActivity::class.java)
+            startActivity(intentHome)
+        }
+
+        val btnPro: ImageView = findViewById(R.id.btnProfile)
+        btnPro.setOnClickListener {
+            val intentUpload = Intent(this, ProfileActivity::class.java)
+            startActivity(intentUpload)
+        }
+    }
 }
+
 

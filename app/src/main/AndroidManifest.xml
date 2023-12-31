@@ -17,14 +17,14 @@
         <activity
             android:name=".HomeActivity"
             android:exported="false" />
-        <activity
-            android:name=".ExploreGambarActivity"
-            android:exported="false"
-            android:label="@string/title_activity_explore_gambar"
-            android:theme="@style/Theme.FinalProject" />
-        <activity
-            android:name=".Home"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".ExploreGambarActivity"-->
+<!--            android:exported="false"-->
+<!--            android:label="@string/title_activity_explore_gambar"-->
+<!--            android:theme="@style/Theme.FinalProject" />-->
+<!--        <activity-->
+<!--            android:name=".Home"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".DetailImageActivity"
             android:exported="false" />

@@ -1,8 +1,10 @@
 package com.example.finalproject
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,6 +31,38 @@ class HomeActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         database = FirebaseDatabase.getInstance()
         fetchAllUserImages()
+
+        // Menambahkan onClickListener ke tombol-tombol
+        val btnPost: ImageView = findViewById(R.id.btnUpload)
+        val btnEx: ImageView = findViewById(R.id.explore)
+        val btnSe: ImageView = findViewById(R.id.btnSearch)
+        val btnHom: ImageView = findViewById(R.id.home)
+
+        btnPost.setOnClickListener {
+            val intupload = Intent(this, UploadActivity::class.java)
+            startActivity(intupload)
+        }
+
+        btnEx.setOnClickListener {
+            val intex = Intent(this, TampilActivity::class.java)
+            startActivity(intex)
+        }
+
+        btnSe.setOnClickListener {
+            val intea = Intent(this, SearchActivity::class.java)
+            startActivity(intea)
+        }
+
+        val btnPro: ImageView = findViewById(R.id.btnProfile)
+        btnPro.setOnClickListener {
+            val intentUpload = Intent(this, ProfileActivity::class.java)
+            startActivity(intentUpload)
+        }
+
+        val btnHm: ImageView = findViewById(R.id.home)
+        btnHm.setOnClickListener{
+
+        }
     }
 
     private fun fetchAllUserImages() {
@@ -44,7 +78,7 @@ class HomeActivity : AppCompatActivity() {
                     val imageUrl = snapshot.child("imageUrl").getValue(String::class.java)
 
                     uid?.let {
-                        // Ambil username dari tabel users berdasarkan uid
+
                         val userRef = database.reference.child("users").child(uid)
                         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(userSnapshot: DataSnapshot) {
@@ -52,13 +86,13 @@ class HomeActivity : AppCompatActivity() {
                                 username?.let {
                                     imageList.add(imageUrl!!)
                                     usernameList.add(username)
-                                    // Setelah mendapatkan username dan URL gambar, pasang ke dalam RecyclerView
+
                                     setupRecyclerView(imageList, usernameList)
                                 }
                             }
 
                             override fun onCancelled(error: DatabaseError) {
-                                // Handle error saat mengambil data dari tabel users
+
                                 Toast.makeText(this@HomeActivity, "Failed to load usernames.", Toast.LENGTH_SHORT).show()
                             }
                         })
@@ -67,7 +101,7 @@ class HomeActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle error saat mengambil data dari tabel uploads
+
                 Toast.makeText(this@HomeActivity, "Failed to load user images.", Toast.LENGTH_SHORT).show()
             }
         })
@@ -75,15 +109,8 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupRecyclerView(imageList: List<String>, usernameList: List<String>) {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewHome)
-        recyclerView.layoutManager = GridLayoutManager(this@HomeActivity,3)
+        recyclerView.layoutManager = GridLayoutManager(this@HomeActivity, 1)
         val homeImageAdapter = HomeImageAdapter(this@HomeActivity, imageList, usernameList)
         recyclerView.adapter = homeImageAdapter
     }
-
 }
-
-
-
-
-
-

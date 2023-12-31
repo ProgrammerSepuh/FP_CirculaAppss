@@ -6,7 +6,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.finalproject.model.Upload
-// Ganti dengan path yang sesuai untuk file resources Anda
+
 
 class ExploreAdapter(private val imageUrlList: MutableList<Upload>) :
     RecyclerView.Adapter<ExploreAdapter.ImageViewHolder>() {

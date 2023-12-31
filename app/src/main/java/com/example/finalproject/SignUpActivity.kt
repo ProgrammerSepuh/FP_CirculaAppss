@@ -40,11 +40,11 @@ class SignUpActivity : AppCompatActivity() {
                             val userRef = database.reference.child("users").child(userId)
                             userRef.child("email").setValue(email)
                             userRef.child("username").setValue(username)
-                            userRef.child("uid").setValue(userId) // Menyimpan UID
+                            userRef.child("uid").setValue(userId)
 
                             val intent = Intent(this, LoginActivity::class.java)
                             startActivity(intent)
-                            finish() // Opsional: menutup aktivitas setelah pendaftaran berhasil
+                            finish()
                         } else {
                             val errorMessage = "Registration failed: ${authTask.exception?.message}"
                             Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()

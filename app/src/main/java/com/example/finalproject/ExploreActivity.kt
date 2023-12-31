@@ -12,7 +12,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-// Ganti dengan path yang sesuai untuk file resources Anda
+
 
 class ExploreActivity : AppCompatActivity() {
 
@@ -25,7 +25,7 @@ class ExploreActivity : AppCompatActivity() {
         setContentView(R.layout.activity_explore)
 
         recyclerViewExplore = findViewById(R.id.recyclerViewSearch)
-        recyclerViewExplore.layoutManager = GridLayoutManager(this, 1) // Atur layout manager (misalnya GridLayoutManager)
+        recyclerViewExplore.layoutManager = GridLayoutManager(this, 1)
 
         val uploadList: MutableList<Upload> = mutableListOf()
 
@@ -47,7 +47,7 @@ class ExploreActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle error saat mengambil data dari Firebase
+
             }
         })
 

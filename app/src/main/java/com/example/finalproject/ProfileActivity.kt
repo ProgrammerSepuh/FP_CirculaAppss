@@ -1,65 +1,4 @@
 package com.example.finalproject
-//
-//import android.content.Intent
-//import android.os.Bundle
-//import android.widget.Button
-//import android.widget.TextView
-//import android.widget.Toast
-//import androidx.appcompat.app.AppCompatActivity
-//import com.google.firebase.auth.FirebaseAuth
-//import com.google.firebase.auth.FirebaseUser
-//import com.google.firebase.database.DataSnapshot
-//import com.google.firebase.database.DatabaseError
-//import com.google.firebase.database.DatabaseReference
-//import com.google.firebase.database.FirebaseDatabase
-//import com.google.firebase.database.ValueEventListener
-//
-//class ProfileActivity : AppCompatActivity() {
-//
-//    private lateinit var firebaseAuth: FirebaseAuth
-//    private lateinit var database: FirebaseDatabase
-//    private lateinit var userReference: DatabaseReference
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_profile)
-//
-//        firebaseAuth = FirebaseAuth.getInstance()
-//        database = FirebaseDatabase.getInstance()
-//
-//        val userId = firebaseAuth.currentUser?.uid // Mendapatkan UID pengguna saat ini
-//
-//        userId?.let { uid ->
-//            val userRef = database.reference.child("users").child(uid)
-//
-//            userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-//                override fun onDataChange(snapshot: DataSnapshot) {
-//                    if (snapshot.exists()) {
-//                        val username = snapshot.child("username").getValue(String::class.java)
-//                        val email = snapshot.child("email").getValue(String::class.java)
-//
-//                        // Menampilkan informasi username dan email ke dalam TextView
-//                        findViewById<TextView>(R.id.userIdTextView).text = "Username: $username"
-//                        findViewById<TextView>(R.id.userEmailTextView).text = "Email: $email"
-//                    }
-//                }
-//
-//                override fun onCancelled(error: DatabaseError) {
-//                    // Handle error saat membaca data dari Firebase
-//                    Toast.makeText(this@ProfileActivity, "Failed to read user data.", Toast.LENGTH_SHORT).show()
-//                }
-//            })
-//        }
-//        val btnUp: Button = findViewById(R.id.btnUpdate)
-//        btnUp.setOnClickListener{
-//            val intup = Intent(this, EditProfileActivity::class.java)
-//            startActivity(intup)
-//        }
-//    }
-//}
-//
-//
-//
 
 
 import android.annotation.SuppressLint
@@ -78,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.database.FirebaseDatabase
+import com.squareup.picasso.Picasso
 
 
 class ProfileActivity : AppCompatActivity() {
@@ -85,10 +25,9 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
     private lateinit var userReference: DatabaseReference
-    private lateinit var imageViewProfile: ImageView
+//    private lateinit var imageViewProfile: ImageView
     private lateinit var textViewUsername: TextView
     private lateinit var textViewEmail: TextView
-
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,7 +37,9 @@ class ProfileActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
 
-        // Di dalam metode onCreate atau onResume
+//        val cardView: CardView = findViewById(R.id.cardView)
+        val profilImageView: ImageView = findViewById(R.id.profil)
+
         val recyclerView: RecyclerView = findViewById(R.id.recyProfil)
         recyclerView.layoutManager = GridLayoutManager(this, 3)
         val imageList: MutableList<String> = mutableListOf()
@@ -108,26 +49,23 @@ class ProfileActivity : AppCompatActivity() {
         textViewUsername = findViewById(R.id.userIdTextView)
         textViewEmail = findViewById(R.id.userEmailTextView)
         userId?.let { uid ->
-            // Mengakses referensi user yang saat ini masuk di tabel 'users'
             val userReference = database.reference.child("users").child(uid)
 
             userReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(userSnapshot: DataSnapshot) {
                     if (userSnapshot.exists()) {
-                        val username = userSnapshot.child("username").getValue(String::class.java)
-                        val email = userSnapshot.child("email").getValue(String::class.java)
 
-                        // Menampilkan informasi username dan email ke dalam TextView
-                        textViewUsername.text = "@$username"
-                        textViewEmail.text = "$email"
+                        val profileImageUrl = userSnapshot.child("profileImageUrl").getValue(String::class.java)
 
-                        // Memuat daftar gambar pengguna dari tabel 'uploads' berdasarkan UID
-                        fetchUserImages(uid)
+
+                        profileImageUrl?.let {
+                            Picasso.get().load(it).into(profilImageView)
+                        }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // Handle error saat membaca data pengguna dari Firebase
+
                     Toast.makeText(this@ProfileActivity, "Failed to read user data.", Toast.LENGTH_SHORT).show()
                 }
             })
@@ -139,25 +77,25 @@ class ProfileActivity : AppCompatActivity() {
             val intent = Intent(this, EditProfileActivity::class.java)
             startActivity(intent)
         }
-        val btnPost : Button = findViewById(R.id.btnUpload)
+        val btnPost : ImageView = findViewById(R.id.btnUpload)
         btnPost.setOnClickListener{
             val intupload = Intent(this, UploadActivity::class.java)
             startActivity(intupload)
         }
 
-        val btnEx:Button = findViewById(R.id.explore)
+        val btnEx:ImageView = findViewById(R.id.explore)
         btnEx.setOnClickListener{
             val intex = Intent(this,TampilActivity::class.java)
             startActivity(intex)
         }
 
-        val btnSe:Button = findViewById(R.id.btnSearch)
+        val btnSe:ImageView = findViewById(R.id.btnSearch)
         btnSe.setOnClickListener{
             val intea = Intent(this,SearchActivity::class.java)
             startActivity(intea)
         }
 
-        val btnHom:Button = findViewById(R.id.home)
+        val btnHom:ImageView = findViewById(R.id.home)
         btnHom.setOnClickListener{
             val intttt = Intent(this,HomeActivity::class.java)
             startActivity(intttt)
@@ -170,32 +108,32 @@ class ProfileActivity : AppCompatActivity() {
         uploadsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val imageList: MutableList<String> = mutableListOf()
-                val descriptionList: MutableList<String> = mutableListOf() // Tambahkan list untuk menyimpan deskripsi gambar
+                val descriptionList: MutableList<String> = mutableListOf()
 
                 for (snapshot in dataSnapshot.children) {
                     val imageUrl = snapshot.child("imageUrl").getValue(String::class.java)
-                    val description = snapshot.child("imageDescription").getValue(String::class.java) // Ambil deskripsi gambar
+                    val description = snapshot.child("imageDescription").getValue(String::class.java)
                     imageUrl?.let {
                         imageList.add(it)
-                        descriptionList.add(description ?: "") // Tambahkan deskripsi ke list
+                        descriptionList.add(description ?: "")
                     }
                 }
 
-                // Setelah mendapatkan daftar URL dan deskripsi gambar, pasang adapter RecyclerView
+
                 val recyclerView: RecyclerView = findViewById(R.id.recyProfil)
-                recyclerView.layoutManager = GridLayoutManager(this@ProfileActivity, 3) // Atur layout manager dengan 3 kolom
-                val imageAdapter = ImageUserAdapter(this@ProfileActivity, imageList, descriptionList) // Teruskan deskripsi gambar ke adapter
+                recyclerView.layoutManager = GridLayoutManager(this@ProfileActivity, 3)
+                val imageAdapter = ImageUserAdapter(this@ProfileActivity, imageList, descriptionList)
                 recyclerView.adapter = imageAdapter
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle error saat mengambil data dari Firebase
+
                 Toast.makeText(this@ProfileActivity, "Failed to read user images.", Toast.LENGTH_SHORT).show()
             }
+
+
         })
     }
-
-
 
 
     override fun onResume() {
@@ -216,7 +154,7 @@ class ProfileActivity : AppCompatActivity() {
                         textViewUsername.text = "@$username"
                         textViewEmail.text = "$email"
 
-                        fetchUserImages(uid) // Memuat kembali daftar gambar pengguna
+                        fetchUserImages(uid)
                     }
                 }
 
@@ -227,11 +165,3 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 }
-
-
-
-
-
-
-
-

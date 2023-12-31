@@ -29,7 +29,7 @@ class UserLainAdapter(private val context: Context, private val imageList: List<
         private val imageView: ImageView = itemView.findViewById(R.id.imageViewItem)
 
         fun bind(imageUrl: String) {
-            // Load gambar menggunakan Glide atau library serupa
+
             Glide.with(context)
                 .load(imageUrl)
                 .into(imageView)

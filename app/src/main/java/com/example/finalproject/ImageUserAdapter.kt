@@ -67,23 +67,23 @@ class ImageUserAdapter(private val context: Context, private val imageList: List
         private val textViewDescription: TextView = itemView.findViewById(R.id.deskripsi)
 
         fun bind(imageUrl: String, description: String) {
-            // Load gambar menggunakan Glide atau library serupa
+
             Glide.with(context)
                 .load(imageUrl)
                 .into(imageView)
 
-            // Set deskripsi gambar ke TextView
+
             textViewDescription.text = description
 
-            // Tambahkan tindakan klik pada gambar di sini
+
             imageView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    // Ketika item gambar diklik, dapatkan URL dan deskripsi gambar
+
                     val imageUrl = imageList[position]
                     val description = descriptionList[position]
 
-                    // Gunakan intent untuk menampilkan gambar dan deskripsi secara penuh di aktivitas baru
+
                     val intent = Intent(context, DetailImageActivity::class.java)
                     intent.putExtra("imageUrl", imageUrl)
                     intent.putExtra("imageDescription", description)

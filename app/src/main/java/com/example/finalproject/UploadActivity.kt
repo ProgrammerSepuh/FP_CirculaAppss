@@ -86,10 +86,10 @@ class UploadActivity : AppCompatActivity() {
                         val currentUserId = firebaseAuth.currentUser?.uid ?: ""
                         val currentUser = firebaseAuth.currentUser
 
-                        // Ambil referensi ke tabel 'users'
+
                         val usersRef = FirebaseDatabase.getInstance().reference.child("users")
 
-                        // Dapatkan 'username' dari tabel 'users' berdasarkan 'userId' saat ini
+
                         usersRef.child(currentUserId).addListenerForSingleValueEvent(object :
                             ValueEventListener {
                             override fun onDataChange(userSnapshot: DataSnapshot) {
@@ -99,7 +99,7 @@ class UploadActivity : AppCompatActivity() {
                                     uri.toString(),
                                     editTextDescription.text.toString(),
                                     currentUserId,
-                                    username ?: "" // Menggunakan 'username' dari tabel 'users'
+                                    username ?: ""
                                 )
 
                                 val databaseReference = FirebaseDatabase.getInstance().reference.child("uploads")
@@ -116,7 +116,7 @@ class UploadActivity : AppCompatActivity() {
                             }
 
                             override fun onCancelled(error: DatabaseError) {
-                                // Handle error
+
                             }
                         })
                     }

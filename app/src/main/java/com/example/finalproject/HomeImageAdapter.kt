@@ -73,7 +73,7 @@ class HomeImageAdapter(private val context: Context, private val imageList: List
                 .load(imageUrl)
                 .into(imageViewUser)
 
-            // Menampilkan informasi user ke TextView
+
             textViewUsername.text = "@$username"
 
         }

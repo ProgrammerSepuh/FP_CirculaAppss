@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#DADADADA"
     tools:context=".SearchActivity">
 
 
@@ -14,7 +15,7 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="15dp"
-        android:background="@drawable/bg_et"
+        android:background="@color/white"
         android:drawableStart="@drawable/small_search"
         android:drawablePadding="25dp"
         android:hint="Search"
@@ -34,10 +35,103 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
 
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="70dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_search_bar" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/main_header"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".MainActivity">
+
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:backgroundTint="#FFFFFF"
+            app:elevation="0dp"
+            app:fabCradleMargin="5dp"
+            app:fabCradleRoundedCornerRadius="20dp"
+            app:fabCradleVerticalOffset="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/home"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Home"
+                    android:padding="16dp"
+                    android:src="@drawable/home_btn" />
+
+                <ImageButton
+                    android:id="@+id/explore"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="50dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Explore"
+                    android:padding="16dp"
+                    android:src="@drawable/explore_btn" />
+
+                <ImageButton
+                    android:id="@+id/btnSearch"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Search"
+                    android:padding="16dp"
+                    android:src="@drawable/search_btn" />
+
+                <ImageButton
+                    android:id="@+id/btnProfile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Profile"
+                    android:padding="16dp"
+                    android:src="@drawable/profile_btn" />
+
+            </LinearLayout>
+
+        </com.google.android.material.bottomappbar.BottomAppBar>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnUpload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#888BF4"
+            android:contentDescription="TODO"
+            android:src="@drawable/upload_btn"
+            app:layout_anchor="@id/bottomAppBar" />
+
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
