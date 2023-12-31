@@ -3,6 +3,6 @@ package com.example.finalproject.model
 data class User(
     val uid: String,
     val email: String,
-    val username: String,//lah
+    val username: String,//lahhhh
     val profileImageUrl: String?
 )
